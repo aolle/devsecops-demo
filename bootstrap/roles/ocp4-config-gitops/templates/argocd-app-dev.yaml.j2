@@ -1,16 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: dev-spring-petclinic
+  name: dev-quarkus-petclinic
   namespace: openshift-gitops
 spec:
   destination:
     namespace: devsecops-dev
     server: https://kubernetes.default.svc
-  project: spring-petclinic
+  project: quarkus-petclinic
   source:
     path: environments/dev
-    repoURL: http://{{ r_gogs_route.resources[0].spec.host }}/gogs/spring-petclinic-config
+    repoURL: http://{{ r_gogs_route.resources[0].spec.host }}/gogs/quarkus-petclinic-config
     targetRevision: HEAD
   syncPolicy:
     automated:

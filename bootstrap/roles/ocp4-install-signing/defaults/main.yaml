@@ -20,8 +20,8 @@ quay_registry_name: demo-registry
 quay_org_name: cicd-demo
 quay_project_name: quay-demo
 quay_repositories:
-  - spring-petclinic-dev
-  - spring-petclinic-stage
+  - quarkus-petclinic-dev
+  - quarkus-petclinic-stage
 secret_required_namespaces:
   - cicd
   - devsecops-dev
