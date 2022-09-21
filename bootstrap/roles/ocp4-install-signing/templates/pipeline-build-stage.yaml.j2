@@ -8,7 +8,7 @@ spec:
     - name: APP_SOURCE_GIT
       type: string
       description: The application git repository
-      default: http://{{ r_gogs_route.resources[0].spec.host }}/gogs/spring-petclinic
+      default: http://{{ r_gogs_route.resources[0].spec.host }}/gogs/quarkus-petclinic
     - name: APP_SOURCE_REVISION
       type: string
       description: The application git revision
@@ -16,7 +16,7 @@ spec:
     - name: APP_MANIFESTS_GIT
       type: string
       description: The application manifests git repository
-      default: http://{{ r_gogs_route.resources[0].spec.host }}/gogs/spring-petclinic-config
+      default: http://{{ r_gogs_route.resources[0].spec.host }}/gogs/quarkus-petclinic-config
     - name: APP_IMAGE_TAG
       type: string
       default: latest
@@ -48,7 +48,7 @@ spec:
     - name: depth
       value: "0"
     - name: subdirectory
-      value: spring-petclinic
+      value: quarkus-petclinic
     - name: deleteExisting
       value: "true"
   - name: unit-tests
@@ -63,7 +63,7 @@ spec:
       workspace: maven-settings
     params:
     - name: GOALS
-      value: ["package", "-f", "spring-petclinic"]
+      value: ["package", "-f", "quarkus-petclinic"]
   - name: code-analysis
     taskRef:
       name: maven
@@ -80,7 +80,7 @@ spec:
       - install
       - sonar:sonar
       - -f
-      - spring-petclinic
+      - quarkus-petclinic
       - -Dsonar.host.url=http://sonarqube:9000
       - -Dsonar.userHome=/tmp/sonar
       - -DskipTests=true
@@ -96,7 +96,7 @@ spec:
       workspace: maven-settings
     params:
     - name: SOURCE_DIR
-      value: spring-petclinic
+      value: quarkus-petclinic
   - name: release-app
     taskRef:
       name: maven
@@ -114,7 +114,7 @@ spec:
       value:
       - deploy
       - -f
-      - spring-petclinic
+      - quarkus-petclinic
       - -DskipTests=true
       - -DaltDeploymentRepository=nexus::default::http://nexus:8081/repository/maven-releases/
       - -DaltSnapshotDeploymentRepository=nexus::default::http://nexus:8081/repository/maven-snapshots/
@@ -129,9 +129,9 @@ spec:
       - name: MAVEN_MIRROR_URL
         value: http://nexus:8081/repository/maven-public/
       - name: PATH_CONTEXT
-        value: spring-petclinic/target
+        value: quarkus-petclinic/target
       - name: IMAGE_NAME
-        value: {{ quay_route}}/{{ quay_org_name }}/spring-petclinic-stage
+        value: {{ quay_route}}/{{ quay_org_name }}/quarkus-petclinic-stage
       - name: IMAGE_TAG
         value: $(params.APP_IMAGE_TAG)
     workspaces:
@@ -146,7 +146,7 @@ spec:
       - name: IMAGE
         value: "image-registry.openshift-image-registry.svc:5000/{{pipeline_namespace}}/cosign-pod"
       - name: SIGNATURE_IMAGE
-        value: "{{ quay_route}}/{{ quay_org_name }}/spring-petclinic-stage"
+        value: "{{ quay_route}}/{{ quay_org_name }}/quarkus-petclinic-stage"
       - name: ARGS
         value: 
           - "sign"
@@ -160,7 +160,7 @@ spec:
       kind: ClusterTask
     params:
     - name: image
-      value: {{ quay_route}}/{{ quay_org_name }}/spring-petclinic-stage
+      value: {{ quay_route}}/{{ quay_org_name }}/quarkus-petclinic-stage
     - name: rox_api_token
       value: roxsecrets
     - name: rox_central_endpoint
@@ -177,7 +177,7 @@ spec:
       kind: ClusterTask
     params:
     - name: image
-      value: {{ quay_route}}/{{ quay_org_name }}/spring-petclinic-stage
+      value: {{ quay_route}}/{{ quay_org_name }}/quarkus-petclinic-stage
     - name: rox_api_token
       value: roxsecrets
     - name: rox_central_endpoint
@@ -222,7 +222,7 @@ spec:
       - name: CURRENT_IMAGE
         value: quay.io/siamaksade/spring-petclinic:latest
       - name: NEW_IMAGE
-        value: {{ quay_route}}/{{ quay_org_name }}/spring-petclinic-stage
+        value: {{ quay_route}}/{{ quay_org_name }}/quarkus-petclinic-stage
       - name: NEW_DIGEST
         value: "$(tasks.build-image.results.IMAGE_DIGEST)"
       - name: KUSTOMIZATION_PATH
@@ -237,7 +237,7 @@ spec:
       - update-deployment
     params:
       - name: application-name
-        value: stage-spring-petclinic
+        value: stage-quarkus-petclinic
   - name: perf-tests-clone
     taskRef:
       name: git-clone
@@ -251,7 +251,7 @@ spec:
     - name: url
       value: $(params.APP_TESTS_GIT)
     - name: subdirectory
-      value: spring-petclinic-gatling
+      value: quarkus-petclinic-gatling
     - name: deleteExisting
       value: "true"
   - name: pentesting-test
@@ -261,7 +261,7 @@ spec:
       - perf-tests-clone
     params:
       - name: APP_URL
-        value: "http://spring-petclinic.$(params.STAGE_NAMESPACE).svc.cluster.local:8080"
+        value: "http://quarkus-petclinic.$(params.STAGE_NAMESPACE).svc.cluster.local:8080"
     workspaces:
     - name: workspace
       workspace: workspace
@@ -272,8 +272,8 @@ spec:
       - perf-tests-clone
     params:
       - name: APP_URL
-        value: "http://spring-petclinic.$(params.STAGE_NAMESPACE).svc.cluster.local:8080"
+        value: "http://quarkus-petclinic.$(params.STAGE_NAMESPACE).svc.cluster.local:8080"
     workspaces:
     - name: simulations
       workspace: workspace
-      subPath: spring-petclinic-gatling
+      subPath: quarkus-petclinic-gatling
